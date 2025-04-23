@@ -1,5 +1,6 @@
 package tests;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,15 +28,18 @@ public class SelenideWikiTest {
         $("#wiki-tab").click();
         $(byXpath("//button[contains(text(), 'Show 3 more pages')]")).click();
         $$("a.Truncate-text").findBy(text("SoftAssertions")).click();
+        $("#wiki-wrapper").shouldHave(Condition.text("""
+                @ExtendWith({SoftAssertsExtension.class})
+                class Tests {
+                  @Test
+                  void test() {
+                    Configuration.assertionMode = SOFT;
+                    open("page.html");
 
-        $$("div.highlight-source-java pre")
-                .findBy(text("@ExtendWith({SoftAssertsExtension.class})"))
-                .shouldHave(
-                        text("Configuration.assertionMode = SOFT"),
-                        text("open(\"page.html\")"),
-                        text("$(\"#first\").should(visible).click()"),
-                        text("$(\"#second\").should(visible).click()")
-                );
+                    $("#first").should(visible).click();
+                    $("#second").should(visible).click();
+                  }
+                }"""));
     }
 
 
